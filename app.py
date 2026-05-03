@@ -23,6 +23,7 @@ from utils import get_text_processor
 from config import CONFIG
 from logger import setup_logger
 
+nltk.download('punkt', download_dir='/opt/render/nltk_data')
 # Initialize logger
 logger = setup_logger(__name__)
 
