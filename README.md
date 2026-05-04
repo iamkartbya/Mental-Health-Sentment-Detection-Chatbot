@@ -70,7 +70,6 @@ mhsd/
 
 - Python 3.8+
 - MongoDB Atlas account
-- Google Gemini API key
 - Streamlit
 
 ### Installation
@@ -102,8 +101,6 @@ mhsd/
    MONGO_PASS=your_mongodb_password
    MONGO_CLUSTER=your_cluster.mongodb.net
 
-   # Gemini API
-   GEMINI_API_KEY=your_gemini_api_key
 
    # Application Settings
    DEBUG=false
@@ -127,7 +124,6 @@ from config import CONFIG
 
 # Access configuration
 mongo_uri = CONFIG.mongo.connection_uri
-api_key = CONFIG.gemini.api_key
 ```
 
 ### 2. **database.py** - Database Management
@@ -234,10 +230,6 @@ title = generate_chat_title(\"My first message...\")
    - TLS connections
    - Connection timeout protection
 
-5. **API Security**
-   - Environment variable management
-   - API key isolation
-   - Error message sanitization
 
 ---
 
