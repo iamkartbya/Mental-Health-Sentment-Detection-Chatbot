@@ -107,7 +107,7 @@ def _handle_login(email: str, password: str, captcha_answer: str) -> bool:
 # ===================== UI RENDERING =====================
 
 def show_login() -> None:
-    \"\"\"Render login page\"\"\"
+    \"\"\"Render enhanced login page\"\"\"
     
     # Initialize captcha on first load
     if \"captcha_answer\" not in st.session_state:
@@ -119,25 +119,29 @@ def show_login() -> None:
         st.session_state.page = \"chat\"
         st.rerun()
     
-    # Layout
-    st.markdown(\"<div style='height:6vh'></div>\", unsafe_allow_html=True)
+    # Layout with proper spacing
+    st.markdown(\"<div style='height:4vh'></div>\", unsafe_allow_html=True)
     
     _, col, _ = st.columns([1, 1.4, 1])
     
     with col:
         # ========== BRANDING ==========
         st.markdown(\"\"\"
-        <div class=\"auth-logo\">🌿</div>
-        <div class=\"auth-appname\">Milo AI</div>
-        <div class=\"auth-heading\">Welcome back</div>
-        <div class=\"auth-subheading\">
-            You're safe here. Sign in and let's take it one step at a time.
+        <div class=\"auth-container\">
+            <div class=\"auth-logo\">🌿</div>
+            <div class=\"auth-appname\">Milo AI</div>
+            <div class=\"auth-heading\">Welcome back</div>
+            <div class=\"auth-subheading\">
+                You're safe here. Sign in and let's take it one step at a time.
+            </div>
         </div>
         \"\"\", unsafe_allow_html=True)
         
+        st.markdown(\"<div style='height:8px'></div>\", unsafe_allow_html=True)
+        
         # ========== EMAIL INPUT ==========
         st.markdown(
-            '<div class=\"field-label\">Email address</div>',
+            '<div class=\"field-label\">📧 Email Address</div>',
             unsafe_allow_html=True
         )
         email = st.text_input(
@@ -147,9 +151,11 @@ def show_login() -> None:
             key=\"login_email\"
         )
         
+        st.markdown(\"<div style='height:4px'></div>\", unsafe_allow_html=True)
+        
         # ========== PASSWORD INPUT ==========
         st.markdown(
-            '<div class=\"field-label\">Password</div>',
+            '<div class=\"field-label\">🔒 Password</div>',
             unsafe_allow_html=True
         )
         password = st.text_input(
@@ -160,12 +166,17 @@ def show_login() -> None:
             key=\"login_password\"
         )
         
+        st.markdown(\"<div style='height:16px'></div>\", unsafe_allow_html=True)
+        
         # ========== CAPTCHA ==========
+        st.markdown(
+            '<div class=\"field-label\">🔢 Verify the Captcha</div>',
+            unsafe_allow_html=True
+        )
         st.markdown(f\"\"\"
-        <div class=\"field-label\">Verify the captcha</div>
         <div class=\"captcha-box\">
             <span class=\"captcha-question\">
-                🔢 {st.session_state[\"captcha_question\"]}
+                {st.session_state[\"captcha_question\"]}
             </span>
         </div>
         \"\"\", unsafe_allow_html=True)
@@ -178,18 +189,18 @@ def show_login() -> None:
         )
         
         # ========== LOGIN BUTTON ==========
-        st.markdown(\"<div style='height:12px'></div>\", unsafe_allow_html=True)
+        st.markdown(\"<div style='height:16px'></div>\", unsafe_allow_html=True)
         
         if st.button(\"Sign In\", use_container_width=True, type=\"primary\"):
             _handle_login(email, password, captcha_input)
         
         # ========== SIGNUP LINK ==========
-        st.markdown(\"<div style='height:16px'></div>\", unsafe_allow_html=True)
+        st.markdown(\"<div style='height:20px'></div>\", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1, 1.8, 1])
         with col2:
             st.markdown(
-                \"<div style='text-align:center; color:#7aab8a; font-size:13px;'>"
+                \"<div style='text-align:center; color:#8aa089; font-size:13px;'>"
                 \"Don't have an account? \",
                 unsafe_allow_html=True
             )

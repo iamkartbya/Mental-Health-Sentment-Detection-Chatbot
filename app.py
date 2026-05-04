@@ -25,32 +25,31 @@ from logger import setup_logger
 
 @st.cache_resource
 def setup_nltk():
+    """Optimized NLTK initialization with silent downloads"""
     import nltk
     import os
 
     nltk_data_dir = "/opt/render/nltk_data"
     os.makedirs(nltk_data_dir, exist_ok=True)
-    nltk.data.path.append(nltk_data_dir)
+    nltk.data.path.insert(0, nltk_data_dir)
 
-    try:
-        nltk.data.find("tokenizers/punkt")
-    except:
-        nltk.download("punkt", download_dir=nltk_data_dir)
-
-    try:
-        nltk.data.find("tokenizers/punkt_tab")
-    except:
-        nltk.download("punkt_tab", download_dir=nltk_data_dir)
-
-    try:
-        nltk.data.find("corpora/stopwords")
-    except:
-        nltk.download("stopwords", download_dir=nltk_data_dir)
-
-    try:
-        nltk.data.find("corpora/wordnet")
-    except:
-        nltk.download("wordnet", download_dir=nltk_data_dir)
+    # List of required resources
+    resources = [
+        ("tokenizers", "punkt"),
+        ("tokenizers", "punkt_tab"),
+        ("corpora", "stopwords"),
+        ("corpora", "wordnet")
+    ]
+    
+    for resource_type, resource_name in resources:
+        resource_path = f"{resource_type}/{resource_name}"
+        try:
+            nltk.data.find(resource_path)
+        except LookupError:
+            try:
+                nltk.download(resource_name, download_dir=nltk_data_dir, quiet=True)
+            except:
+                pass  # Silent failure for optional resources
 
 setup_nltk()
 # Initialize logger

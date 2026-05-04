@@ -137,13 +137,15 @@ class ChatService:
             raise DatabaseError(f"Failed to save message: {str(e)}")
     
     @staticmethod
-    def load_chat(user_id: str, chat_id: str) -> List[Dict[str, Any]]:
+    def load_chat(user_id: str, chat_id: str, limit: int = 50, offset: int = 0) -> List[Dict[str, Any]]:
         """
-        Load all messages for a chat.
+        Load messages for a chat with pagination (optimized).
         
         Args:
             user_id: User identifier
             chat_id: Chat identifier
+            limit: Number of messages to load (default 50)
+            offset: Offset for pagination (default 0)
             
         Returns:
             List of message dictionaries
@@ -163,12 +165,12 @@ class ChatService:
             if not chat:
                 raise ChatNotFoundError(f"Chat {chat_id} not found")
             
-            # Load messages
+            # Load messages with pagination (optimized with skip and limit)
             messages_collection = get_messages_collection()
             messages = list(messages_collection.find({
                 "user_id": user_id,
                 "chat_id": chat_id
-            }).sort("timestamp", 1))
+            }).sort("timestamp", 1).skip(offset).limit(limit))
             
             # Format for LLM
             chat_list = []
@@ -178,7 +180,7 @@ class ChatService:
                     "content": msg["content"]
                 })
             
-            logger.debug(f"Loaded {len(chat_list)} messages for chat: {chat_id}")
+            logger.debug(f"Loaded {len(chat_list)} messages for chat: {chat_id} (offset: {offset}, limit: {limit})")
             return chat_list
             
         except ChatNotFoundError:

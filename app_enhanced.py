@@ -40,24 +40,24 @@ logger = setup_logger(__name__)
 
 # Configure Streamlit page
 st.set_page_config(
-    page_title=\"Milo AI\",
-    page_icon=\"🌿\",
-    layout=\"wide\",
-    initial_sidebar_state=\"expanded\"
+    page_title="Milo AI",
+    page_icon="🌿",
+    layout="wide",
+    initial_sidebar_state="expanded"
 )
 
 
 # ===================== SESSION STATE INITIALIZATION =====================
 
 def initialize_session_state() -> None:
-    \"\"\"Initialize Streamlit session state variables\"\"\"
+    """Initialize Streamlit session state variables"""
     defaults = {
-        \"user\": None,
-        \"page\": \"login\",
-        \"chat_id\": str(uuid.uuid4()),
-        \"chat_created\": False,
-        \"messages\": [],
-        \"thinking\": False,
+        "user": None,
+        "page": "login",
+        "chat_id": str(uuid.uuid4()),
+        "chat_created": False,
+        "messages": [],
+        "thinking": False,
     }
     
     for key, value in defaults.items():
@@ -68,15 +68,15 @@ def initialize_session_state() -> None:
 # ===================== AUTHENTICATION FLOW =====================
 
 def handle_auto_login() -> None:
-    \"\"\"Handle automatic login from query parameters\"\"\"
-    if st.session_state.user is None and \"user\" in st.query_params:
-        st.session_state.user = st.query_params[\"user\"]
-        st.session_state.page = \"chat\"
+    """Handle automatic login from query parameters"""
+    if st.session_state.user is None and "user" in st.query_params:
+        st.session_state.user = st.query_params["user"]
+        st.session_state.page = "chat"
 
 
 def show_auth_pages() -> None:
-    \"\"\"Show authentication pages (login/signup)\"\"\"
-    if st.session_state.page == \"login\":
+    """Show authentication pages (login/signup)"""
+    if st.session_state.page == "login":
         ui_login.show_login()
     else:
         ui_signup.show_signup()
@@ -85,45 +85,45 @@ def show_auth_pages() -> None:
 # ===================== CHAT INTERFACE =====================
 
 def render_chat_header() -> None:
-    \"\"\"Render chat interface header\"\"\"
+    """Render chat interface header"""
     col1, col2, col3 = st.columns([3, 1, 1])
     
     with col1:
         st.markdown(
-            \"<div style='font-size:24px; font-weight:700; color:#102117;'>"
-            \"🌿 Milo AI</div>\",
+            "<div style='font-size:24px; font-weight:700; color:#102117;'>"
+            "🌿 Milo AI</div>",
             unsafe_allow_html=True
         )
         st.markdown(
-            \"<div style='font-size:13px; color:#7aab8a;'>"
-            \"Your mental health support companion</div>\",
+            "<div style='font-size:13px; color:#7aab8a;'>"
+            "Your mental health support companion</div>",
             unsafe_allow_html=True
         )
     
     with col3:
-        if st.button(\"🚪 Logout\", key=\"logout_btn\"):
+        if st.button("🚪 Logout", key="logout_btn"):
             st.session_state.user = None
-            st.session_state.page = \"login\"
+            st.session_state.page = "login"
             st.rerun()
 
 
 def render_sidebar() -> None:
-    \"\"\"Render chat sidebar with chat history\"\"\"
+    """Render chat sidebar with chat history"""
     with st.sidebar:
         st.markdown(
-            \"<div style='text-align:center; margin-bottom:20px;'>"
-            \"<h3>💬 Chats</h3></div>\",
+            "<div style='text-align:center; margin-bottom:20px;'>"
+            "<h3>💬 Chats</h3></div>",
             unsafe_allow_html=True
         )
         
         # New chat button
-        if st.button(\"➕ New Chat\", use_container_width=True, key=\"new_chat_btn\"):
+        if st.button("➕ New Chat", use_container_width=True, key="new_chat_btn"):
             st.session_state.chat_id = str(uuid.uuid4())
             st.session_state.chat_created = False
             st.session_state.messages = []
             st.rerun()
         
-        st.markdown(\"---\")
+        st.markdown("---")
         
         # Load and display chat history
         try:
@@ -135,29 +135,29 @@ def render_sidebar() -> None:
                     
                     with col1:
                         if st.button(
-                            f\"💬 {chat['title'][:30]}\",
-                            key=f\"chat_{chat['chat_id']}\",
+                            f"💬 {chat['title'][:30]}\",
+                            key=f"chat_{chat['chat_id']}\",
                             use_container_width=True
                         ):
-                            st.session_state.chat_id = chat[\"chat_id\"]
+                            st.session_state.chat_id = chat["chat_id"]
                             st.session_state.messages = load_chat_history(
                                 st.session_state.user,
-                                chat[\"chat_id\"]
+                                chat["chat_id"]
                             )
                             st.rerun()
                     
                     with col2:
                         if st.button(
-                            \"🗑️\",
-                            key=f\"delete_{chat['chat_id']}\",
-                            help=\"Delete chat\"
+                            "🗑️",
+                            key=f"delete_{chat['chat_id']}",
+                            help="Delete chat"
                         ):
-                            delete_user_chat(st.session_state.user, chat[\"chat_id\"])
+                            delete_user_chat(st.session_state.user, chat["chat_id"])
                             st.rerun()
             else:
                 st.markdown(
-                    \"<div style='text-align:center; color:#999; font-size:13px;'>"
-                    \"No chats yet. Start a new conversation!</div>\",
+                    "<div style='text-align:center; color:#999; font-size:13px;'>"
+                    "No chats yet. Start a new conversation!</div>",
                     unsafe_allow_html=True
                 )
         

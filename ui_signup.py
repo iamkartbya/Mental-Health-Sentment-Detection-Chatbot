@@ -37,7 +37,7 @@ def _init_captcha() -> None:
 
 
 def _validate_captcha(user_answer: str) -> bool:
-    \"\"\"Validate captcha answer\"\"\"
+    """Validate captcha answer"""
     try:
         return int(user_answer) == st.session_state.get("su_captcha_answer", -1)
     except ValueError:
@@ -50,25 +50,25 @@ def _validate_signup_form(
     confirm_password: str,
     captcha_answer: str
 ) -> tuple[bool, str]:
-    \"\"\"
+    """
     Validate signup form.
     
     Returns:
         tuple of (is_valid: bool, error_message: str)
-    \"\"\"
+    """
     if not email or not password or not confirm_password:
-        return False, \"All fields are required\"
+        return False, "All fields are required"
     
     if password != confirm_password:
-        return False, \"Passwords do not match\"
+        return False, "Passwords do not match"
     
     if len(password) < 8:
-        return False, \"Password must be at least 8 characters\"
+        return False, "Password must be at least 8 characters"
     
     if not _validate_captcha(captcha_answer):
-        return False, \"Captcha answer is incorrect\"
+        return False, "Captcha answer is incorrect"
     
-    return True, \"\"
+    return True, ""
 
 
 def _handle_signup(
@@ -77,19 +77,19 @@ def _handle_signup(
     confirm_password: str,
     captcha_answer: str
 ) -> bool:
-    \"\"\"
+    """
     Handle signup logic.
     
     Returns:
         bool: True if signup successful
-    \"\"\"
+    """
     # Validate form
     is_valid, error_msg = _validate_signup_form(
         email, password, confirm_password, captcha_answer
     )
     
     if not is_valid:
-        st.error(f\"❌ {error_msg}\")
+        st.error(f"❌ {error_msg}")
         _init_captcha()
         return False
     
@@ -97,39 +97,39 @@ def _handle_signup(
     try:
         user = signup_user(email, password)
         
-        logger.info(f\"New user registered: {email}\")
+        logger.info(f"New user registered: {email}")
         
-        st.success(\"✅ Account created successfully!\")
-        st.info(\"You can now sign in with your credentials.\")
+        st.success("✅ Account created successfully!")
+        st.info("You can now sign in with your credentials.")
         
         # Switch to login after brief delay
         import time
         time.sleep(1)
-        st.session_state.page = \"login\"
+        st.session_state.page = "login"
         st.rerun()
         return True
         
     except UserAlreadyExistsError as e:
-        st.error(f\"❌ {str(e)}\")
-        logger.warning(f\"Signup attempt with existing email: {email}\")
+        st.error(f"❌ {str(e)}")
+        logger.warning(f"Signup attempt with existing email: {email}")
         return False
     except ValidationError as e:
-        st.error(f\"❌ {str(e)}\")
+        st.error(f"❌ {str(e)}")
         return False
     except DatabaseError as e:
-        st.error(f\"❌ Database error: {str(e)}\")
-        logger.error(f\"Database error during signup: {str(e)}\")
+        st.error(f"❌ Database error: {str(e)}")
+        logger.error(f"Database error during signup: {str(e)}")
         return False
     except Exception as e:
-        st.error(f\"❌ An unexpected error occurred: {str(e)}\")
-        logger.error(f\"Unexpected error during signup: {str(e)}\")
+        st.error(f"❌ An unexpected error occurred: {str(e)}")
+        logger.error(f"Unexpected error during signup: {str(e)}")
         return False
 
 
 # ===================== UI RENDERING =====================
 
 def show_signup() -> None:
-    \"\"\"Render signup page\"\"\"
+    \"\"\"Render enhanced signup page\"\"\"
     
     # Initialize captcha on first load
     if \"su_captcha_answer\" not in st.session_state:
@@ -142,17 +142,21 @@ def show_signup() -> None:
     with col:
         # ========== BRANDING ==========
         st.markdown(\"\"\"
-        <div class=\"auth-logo\">🌿</div>
-        <div class=\"auth-appname\">Milo AI</div>
-        <div class=\"auth-heading\">You're not alone</div>
-        <div class=\"auth-subheading\">
-            Create your space. Milo is here to listen, reflect, and support you.
+        <div class=\"auth-container\">
+            <div class=\"auth-logo\">🌿</div>
+            <div class=\"auth-appname\">Milo AI</div>
+            <div class=\"auth-heading\">You're not alone</div>
+            <div class=\"auth-subheading\">
+                Create your space. Milo is here to listen, reflect, and support you.
+            </div>
         </div>
         \"\"\", unsafe_allow_html=True)
         
+        st.markdown(\"<div style='height:8px'></div>\", unsafe_allow_html=True)
+        
         # ========== EMAIL INPUT ==========
         st.markdown(
-            '<div class=\"field-label\">Email address</div>',
+            '<div class=\"field-label\">📧 Email Address</div>',
             unsafe_allow_html=True
         )
         email = st.text_input(
@@ -162,9 +166,11 @@ def show_signup() -> None:
             key=\"signup_email\"
         )
         
+        st.markdown(\"<div style='height:4px'></div>\", unsafe_allow_html=True)
+        
         # ========== PASSWORD INPUT ==========
         st.markdown(
-            '<div class=\"field-label\">Password</div>',
+            '<div class=\"field-label\">🔒 Password</div>',
             unsafe_allow_html=True
         )
         password = st.text_input(
@@ -181,15 +187,19 @@ def show_signup() -> None:
             percentage = int((score / 4) * 100)
             
             st.markdown(f\"\"\"
-            <div class=\"strength-bar-wrap\">
-              <div class=\"strength-bar\" style=\"width:{percentage}%; background:{color};\"></div>
+            <div style=\"margin: 8px 0;\">
+                <div class=\"strength-bar-wrap\">
+                    <div class=\"strength-bar\" style=\"width:{percentage}%; background:{color}; transition: width 0.3s ease;\"></div>
+                </div>
+                <div class=\"strength-label\" style=\"color:{color}; margin-top: 4px;\">{label}</div>
             </div>
-            <div class=\"strength-label\" style=\"color:{color};\">{label}</div>
             \"\"\", unsafe_allow_html=True)
+        
+        st.markdown(\"<div style='height:4px'></div>\", unsafe_allow_html=True)
         
         # ========== CONFIRM PASSWORD ==========
         st.markdown(
-            '<div class=\"field-label\">Confirm password</div>',
+            '<div class=\"field-label\">🔑 Confirm Password</div>',
             unsafe_allow_html=True
         )
         confirm_password = st.text_input(
@@ -204,21 +214,26 @@ def show_signup() -> None:
         if confirm_password and password:
             if password == confirm_password:
                 st.markdown(
-                    '<div class=\"strength-label\" style=\"color:#5db87a;\">✓ Passwords match</div>',
+                    '<div class=\"strength-label\" style=\"color:#5db87a; margin-top: 4px;\">✓ Passwords match</div>',
                     unsafe_allow_html=True
                 )
             else:
                 st.markdown(
-                    '<div class=\"strength-label\" style=\"color:#e07070;\">✗ Passwords do not match</div>',
+                    '<div class=\"strength-label\" style=\"color:#e07070; margin-top: 4px;\">✗ Passwords do not match</div>',
                     unsafe_allow_html=True
                 )
         
+        st.markdown(\"<div style='height:12px'></div>\", unsafe_allow_html=True)
+        
         # ========== CAPTCHA ==========
+        st.markdown(
+            '<div class=\"field-label\">🔢 Verify the Captcha</div>',
+            unsafe_allow_html=True
+        )
         st.markdown(f\"\"\"
-        <div class=\"field-label\">Verify the captcha</div>
         <div class=\"captcha-box\">
             <span class=\"captcha-question\">
-                🔢 {st.session_state[\"su_captcha_question\"]}
+                {st.session_state[\"su_captcha_question\"]}
             </span>
         </div>
         \"\"\", unsafe_allow_html=True)
@@ -231,18 +246,18 @@ def show_signup() -> None:
         )
         
         # ========== SIGNUP BUTTON ==========
-        st.markdown(\"<div style='height:12px'></div>\", unsafe_allow_html=True)
+        st.markdown(\"<div style='height:16px'></div>\", unsafe_allow_html=True)
         
         if st.button(\"Create Account\", use_container_width=True, type=\"primary\"):
             _handle_signup(email, password, confirm_password, captcha_input)
         
         # ========== LOGIN LINK ==========
-        st.markdown(\"<div style='height:16px'></div>\", unsafe_allow_html=True)
+        st.markdown(\"<div style='height:20px'></div>\", unsafe_allow_html=True)
         
         col1, col2, col3 = st.columns([1, 1.8, 1])
         with col2:
             st.markdown(
-                \"<div style='text-align:center; color:#7aab8a; font-size:13px;'>"
+                \"<div style='text-align:center; color:#8aa089; font-size:13px;'>"
                 \"Already have an account? \",
                 unsafe_allow_html=True
             )
